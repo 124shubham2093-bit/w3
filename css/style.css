@@ -5673,11 +5673,26 @@ body.bb-flip-hint-seen .flip-tap-hint {
   overflow: hidden;
   transition: box-shadow 0.4s ease, border-color 0.4s ease;
   cursor: default;
+  /* Required so .proj-card-video (position:absolute) fills the card */
+  position: relative;
 }
 
 .proj-card:hover {
   box-shadow: 0 20px 56px rgba(61, 61, 255, 0.13);
   border-color: rgba(61, 61, 255, 0.22);
+}
+
+/* ── PROJECT CARD VIDEO ── */
+/* Absolutely-fills the parent .proj-card at 9:16. */
+.proj-card-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  border-radius: inherit;
 }
 
 .proj-card-num {
@@ -5689,6 +5704,9 @@ body.bb-flip-hint-seen .flip-tap-hint {
   user-select: none;
   transition: color 0.4s ease;
   pointer-events: none;
+  /* Sit above the video layer */
+  position: relative;
+  z-index: 1;
 }
 
 .proj-card:hover .proj-card-num {
