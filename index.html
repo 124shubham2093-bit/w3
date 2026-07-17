@@ -187,20 +187,80 @@
     <!-- MOBILE WORK STRIP (hidden on desktop, replaces arc on mobile) -->
     <div class="mobile-work-strip">
       <div class="mobile-work-track">
-        <div class="mobile-work-card"><span class="mobile-work-num">01</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">02</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">03</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">04</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">05</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">06</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">07</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">01</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">02</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">03</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">04</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">05</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">06</span></div>
-        <div class="mobile-work-card"><span class="mobile-work-num">07</span></div>
+        <!-- 6 originals -->
+        <div class="mobile-work-card">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/1.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">01</span>
+        </div>
+        <div class="mobile-work-card">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/2.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">02</span>
+        </div>
+        <div class="mobile-work-card">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/3.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">03</span>
+        </div>
+        <div class="mobile-work-card">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/4.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">04</span>
+        </div>
+        <div class="mobile-work-card">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/5.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">05</span>
+        </div>
+        <div class="mobile-work-card">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/7.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">06</span>
+        </div>
+        <!-- 6 duplicates for seamless loop -->
+        <div class="mobile-work-card" aria-hidden="true">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/1.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">01</span>
+        </div>
+        <div class="mobile-work-card" aria-hidden="true">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/2.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">02</span>
+        </div>
+        <div class="mobile-work-card" aria-hidden="true">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/3.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">03</span>
+        </div>
+        <div class="mobile-work-card" aria-hidden="true">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/4.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">04</span>
+        </div>
+        <div class="mobile-work-card" aria-hidden="true">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/5.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">05</span>
+        </div>
+        <div class="mobile-work-card" aria-hidden="true">
+          <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="">
+            <source src="assets/videos/7.mp4" type="video/mp4">
+          </video>
+          <span class="mobile-work-num">06</span>
+        </div>
       </div>
     </div>
 
@@ -213,72 +273,74 @@
       <div class="arc-ring" id="arcRing">
 
         <!-- ═══════════════════════════════════════════════════
-             GIF CARDS — To activate a card, set the src below
-             to your GIF file path, e.g. src="gifs/work-1.gif"
+             VIDEO CARDS — 6 cards mapped to local MP4 files
              Card label: update the text inside .card-label
              ═══════════════════════════════════════════════════ -->
 
-        <!-- CARD 1 -->
+        <!-- CARD 01 → assets/videos/1.mp4 -->
         <div class="a-card gif-card">
           <div class="card-gif-wrap">
-            <img class="card-gif" src="" alt="Project 1">
+            <video class="card-video" autoplay muted loop playsinline preload="metadata">
+              <source src="assets/videos/1.mp4" type="video/mp4">
+            </video>
             <div class="card-gif-empty"><span class="gif-num">01</span></div>
           </div>
-          <div class="card-label">Your Project Name</div>
+          <div class="card-label">Our Work</div>
         </div>
 
-        <!-- CARD 2 -->
+        <!-- CARD 02 → assets/videos/2.mp4 -->
         <div class="a-card gif-card">
           <div class="card-gif-wrap">
-            <img class="card-gif" src="" alt="Project 2">
+            <video class="card-video" autoplay muted loop playsinline preload="metadata">
+              <source src="assets/videos/2.mp4" type="video/mp4">
+            </video>
             <div class="card-gif-empty"><span class="gif-num">02</span></div>
           </div>
-          <div class="card-label">Your Project Name</div>
+          <div class="card-label">Our Work</div>
         </div>
 
-        <!-- CARD 3 -->
+        <!-- CARD 03 → assets/videos/3.mp4 -->
         <div class="a-card gif-card">
           <div class="card-gif-wrap">
-            <img class="card-gif" src="" alt="Project 3">
+            <video class="card-video" autoplay muted loop playsinline preload="metadata">
+              <source src="assets/videos/3.mp4" type="video/mp4">
+            </video>
             <div class="card-gif-empty"><span class="gif-num">03</span></div>
           </div>
-          <div class="card-label">Your Project Name</div>
+          <div class="card-label">Our Work</div>
         </div>
 
-        <!-- CARD 4 -->
+        <!-- CARD 04 → assets/videos/4.mp4 -->
         <div class="a-card gif-card">
           <div class="card-gif-wrap">
-            <img class="card-gif" src="" alt="Project 4">
+            <video class="card-video" autoplay muted loop playsinline preload="metadata">
+              <source src="assets/videos/4.mp4" type="video/mp4">
+            </video>
             <div class="card-gif-empty"><span class="gif-num">04</span></div>
           </div>
-          <div class="card-label">Your Project Name</div>
+          <div class="card-label">Our Work</div>
         </div>
 
-        <!-- CARD 5 -->
+        <!-- CARD 05 → assets/videos/5.mp4 -->
         <div class="a-card gif-card">
           <div class="card-gif-wrap">
-            <img class="card-gif" src="" alt="Project 5">
+            <video class="card-video" autoplay muted loop playsinline preload="metadata">
+              <source src="assets/videos/5.mp4" type="video/mp4">
+            </video>
             <div class="card-gif-empty"><span class="gif-num">05</span></div>
           </div>
-          <div class="card-label">Your Project Name</div>
+          <div class="card-label">Our Work</div>
         </div>
 
-        <!-- CARD 6 -->
+        <!-- CARD 06 → assets/videos/7.mp4 (was Card 07) -->
         <div class="a-card gif-card">
           <div class="card-gif-wrap">
-            <img class="card-gif" src="" alt="Project 6">
+            <video class="card-video" autoplay muted loop playsinline preload="metadata">
+              <source src="assets/videos/7.mp4" type="video/mp4">
+            </video>
             <div class="card-gif-empty"><span class="gif-num">06</span></div>
           </div>
-          <div class="card-label">Your Project Name</div>
-        </div>
-
-        <!-- CARD 7 -->
-        <div class="a-card gif-card">
-          <div class="card-gif-wrap">
-            <img class="card-gif" src="" alt="Project 7">
-            <div class="card-gif-empty"><span class="gif-num">07</span></div>
-          </div>
-          <div class="card-label">Your Project Name</div>
+          <div class="card-label">Our Work</div>
         </div>
 
       </div>

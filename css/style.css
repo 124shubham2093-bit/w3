@@ -799,6 +799,25 @@ select {
   user-select: none;
 }
 
+/* ── VIDEO CARD ── */
+/* Drop-in replacement for .card-gif when using <video> instead of <img>.
+   Preserves: full-cover fill, clipped to parent, no user interaction. */
+.card-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  border-radius: inherit; /* honour parent .a-card / .mobile-work-card radius */
+}
+
+/* Hide the placeholder number once a video source is present */
+.card-video + .card-gif-empty {
+  display: none;
+}
+
 .a-card:hover {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
   z-index: 100 !important;
