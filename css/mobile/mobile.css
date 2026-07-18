@@ -11,15 +11,51 @@
     --container-px: 20px;
   }
 
-  /* Adjust hero text positioning on mobile: make it sit higher up */
+  /* Prevent arc-ring (260vh wide) from causing a horizontal scrollbar on iOS Safari.
+     body { overflow-x: hidden } alone is insufficient on iOS — html needs it too. */
+  html, body {
+    overflow-x: hidden !important;
+  }
+
+  /* ── RC-1 (revised): Give hero enough space for the scaled-down arc ──
+     Desktop arc-ring is 260vh = 2640px on mobile — far too big.
+     We scale it to 220vw below. The hero needs ~120vh minimum.
+     padding-bottom:0 here — the reel's own margin-top (32vh below)
+     provides vertical separation between arc and reel. */
+  .hero-page {
+    min-height: 120vh !important;
+    height: auto !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Adjust hero text positioning on mobile: make it sit higher up.
+     z-index:25 ensures hero text stays above arc cards (z-index:20)
+     and the reel section (z-index:15). */
   .hero-text {
+    position: relative !important;
+    z-index: 25 !important;
     padding-top: clamp(16px, 3.5vh, 40px) !important;
     padding-bottom: clamp(16px, 3vh, 32px) !important;
   }
 
-  /* Adjust the arc ring top on mobile: make it sit lower down so it does not overlap with hero subtext */
+  /* ── STACKING: hero-text stays above arc cards ──
+     .arc-scene keeps base z-index:5 from style.css. No override needed.
+     .hero-text gets z-index:25 so headline + sub-text always appear
+     in front of the orbiting video cards. */
+
+  /* ── Scale the arc ring for mobile AND move it higher ──
+     Desktop: 260vh = 2640px on 844px viewport. Ring radius = 1320px.
+     Fix width: 220vw = ~858px on 390px. Radius = 429px.
+     Fix top: 35vh (was 48vh). With top:35vh, the ring center sits at
+     35vh + 429px from arc-scene top. Card peaks land at ~350-420px
+     from page-top — above the reel section (which starts at ~630px
+     after its 32vh margin-top). Cards are visible in the hero area
+     without overlapping the reel. The JS layoutCards() reads
+     arcRing.offsetWidth for positions so CSS-only changes auto-resize. */
   .arc-ring {
-    top: 61vh !important;
+    width: 220vw !important;
+    height: 220vw !important;
+    top: 35vh !important;
   }
 
   /* Sizing cards and details on mobile to be neat and proportional */
@@ -75,7 +111,11 @@
     width: auto !important;
   }
 
-  /* MOBILE WORK STRIP — hidden because desktop arc is active */
+  /* ── RC-4 REVERTED: Arc is the intended mobile hero animation ──
+     The original comment "hidden because desktop arc is active" meant the
+     MOBILE-WORK-STRIP was hidden because the ARC runs on all screen sizes.
+     The arc JS has no mobile guard — .arc-ring { top: 61vh } confirms it was
+     always tuned for mobile. Keep the arc, keep the strip hidden. */
   .mobile-work-strip {
     display: none !important;
   }
@@ -136,7 +176,76 @@
     display: none !important;
   }
 
-  /* ── Home reel section — mobile ── */
+  /* ── RC-2 (revised): Restore a modest margin-top; keep sticky ──
+     Original RC-2 removed all margin-top (was 38vh in style.css) to
+     eliminate the "huge blank gap". But with the arc ring now at top:35vh,
+     card peaks land at y:350-420px. The reel must start BELOW that.
+     32vh (~270px at 844px) pushes the reel section start to ~630px —
+     safely below all arc card positions. The old 38vh gap complaint was
+     caused by the hero being 290vh tall, not by the margin itself.
+     With hero min-height:120vh the 32vh margin is proportional and
+     creates a natural breathing room between hero text and reel.
+     position:sticky + top:0 is preserved so ScrollTrigger still works. */
+  #home-reel-section {
+    position: sticky !important;
+    top: 0 !important;
+    margin-top: 32vh !important;        /* pushes reel below arc card area */
+    height: auto !important;
+    min-height: auto !important;
+    background: #000 !important;
+    gap: 32px !important;
+    padding: clamp(40px, 8vh, 64px) 24px !important;
+    z-index: 15 !important;             /* keeps base value — explicitly stated */
+  }
+
+  /* Keep the inner text readable on mobile */
+  #home-reel-section .hero-inner-text {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .arc-hero-para {
+    font-size: clamp(15px, 4vw, 18px) !important;
+    padding: 0 !important;
+  }
+
+  /* Scale down play/reel text for mobile */
+  #home-reel-section .play-text,
+  #home-reel-section .reel-text {
+    font-size: clamp(28px, 9vw, 44px) !important;
+  }
+
+  /* ── RC-3 (modified): Reduce spacer from 900px → 600px on mobile ──
+     The spacer gives the sticky #home-reel-section scroll room so the
+     card can expand while the section is pinned at top:0.
+     Math: at progress 600/900 = 0.667,
+     (0.667 - 0.05) / 0.50 = 1.23 → clamped to 1.0 → full expansion.
+     600px (was 500px) gives a slightly slower, more legible expansion
+     on mobile and ensures the reel begins expanding as soon as it enters
+     the viewport rather than feeling abrupt. */
+  .home-reel-spacer {
+    height: 600px !important;
+    display: block !important;
+  }
+
+  /* about-reel-spacer only appears on about.html — keep collapsed on mobile */
+  .about-reel-spacer {
+    display: none !important;
+    height: 0 !important;
+  }
+
+  /* ── Overflow fix: hide decorative absolute elements that extend beyond mobile viewport ──
+     .reel-h-line  → position:absolute; left:-50vw; width:200vw (bleeds right by ~222px)
+     .reel-ring-svg → position:absolute; width:480px (wider than mobile viewport)
+     Both are purely decorative — removing them has zero functional impact on mobile. */
+  .reel-h-line,
+  .reel-ring-svg {
+    display: none !important;
+  }
+
+  /* NOTE: overflow:hidden NOT set on .hero-page — arc cards extend beyond
+     the hero boundary by design (cards fan out from the bottom arc).
+     Horizontal bleed from the 260vh arc-ring is handled by body { overflow-x:hidden }. */
 
 
   /* ── Nav mobile ── */
