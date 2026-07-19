@@ -1301,6 +1301,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Re-query so allCards includes originals + clones (14 total)
       const allCards   = gsap.utils.toArray('#arcRing > .a-card');
+
+      // Bind video ready state globally for all .card-video instances (desktop & mobile)
+      document.querySelectorAll('.card-video').forEach(video => {
+        const poster = video.previousElementSibling;
+        if (poster && poster.classList.contains('card-video-poster')) {
+          const hidePoster = () => {
+            if (video.readyState >= 2 && !video.paused) {
+              poster.style.opacity = '0';
+            }
+          };
+          if (video.readyState >= 2 && !video.paused) {
+            hidePoster();
+          } else {
+            video.addEventListener('playing', hidePoster);
+          }
+        }
+      });
+
       const allTotal   = allCards.length;          // 14
       const stepDeg    = 360 / allTotal;           // ~25.7° even spacing
 
