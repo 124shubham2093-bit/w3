@@ -1302,10 +1302,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Re-query so allCards includes originals + clones (14 total)
       const allCards   = gsap.utils.toArray('#arcRing > .a-card');
 
-      // Bind video ready state globally for all .card-video instances (desktop & mobile)
-      document.querySelectorAll('.card-video').forEach(video => {
+      // Bind video ready state globally for all .card-video and .proj-card-video instances
+      document.querySelectorAll('.card-video, .proj-card-video').forEach(video => {
         const poster = video.previousElementSibling;
-        if (poster && poster.classList.contains('card-video-poster')) {
+        if (poster && (poster.classList.contains('card-video-poster') || poster.classList.contains('project-video-poster'))) {
           const hidePoster = () => {
             if (video.readyState >= 2 && !video.paused) {
               poster.style.opacity = '0';

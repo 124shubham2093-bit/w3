@@ -5697,6 +5697,18 @@ body.bb-flip-hint-seen .flip-tap-hint {
 
 /* ── PROJECT CARD VIDEO ── */
 /* Absolutely-fills the parent .proj-card at 9:16. */
+.project-video-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
 .proj-card-video {
   position: absolute;
   inset: 0;
@@ -5706,6 +5718,7 @@ body.bb-flip-hint-seen .flip-tap-hint {
   display: block;
   pointer-events: none;
   border-radius: inherit;
+  z-index: 1;
 }
 
 .proj-card-num {
@@ -5719,7 +5732,7 @@ body.bb-flip-hint-seen .flip-tap-hint {
   pointer-events: none;
   /* Sit above the video layer */
   position: relative;
-  z-index: 1;
+  z-index: 3;
 }
 
 .proj-card:hover .proj-card-num {
