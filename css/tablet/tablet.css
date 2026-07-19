@@ -174,8 +174,6 @@
   #section-blink,
   #section-build,
   #section-boom {
-    position: sticky !important;
-    top: 0 !important;
     height: 100svh !important;
     min-height: 100svh !important;
     padding: 0 !important;

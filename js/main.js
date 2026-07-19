@@ -396,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Parallax Scroll-Driven Animation ──
   const parallaxSections = document.querySelectorAll('.parallax-word-section');
-  if (parallaxSections.length && window.innerWidth > 1024) {
+  if (parallaxSections.length) {
     {
       // ── Desktop: pin + card-rotation + image parallax (now runs on all screens > 1024px) ──
       parallaxSections.forEach((section, i) => {
@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ScrollTrigger.create({
             trigger: section,
             start: 'bottom bottom',
-            end: 'bottom top',
+            end: 'bottom 25%',
             pin: true,
             pinSpacing: false,
           });
