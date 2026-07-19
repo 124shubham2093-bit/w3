@@ -1713,10 +1713,13 @@ document.addEventListener('DOMContentLoaded', () => {
     homeCard.style.height       = cH + 'px';
     homeCard.style.borderRadius = cR + 'px';
 
-    // Mobile: position:fixed when section is actively scrolling (scrollProg>0),
-    // absolute at rest so the card doesn't float over the hero at page load.
+    // Mobile: position:fixed ONLY while the ScrollTrigger is actively between
+    // its start and end (0 < scrollProg < 1). This lets the card overlay the
+    // navbar during expansion. Once scrollProg reaches 1 (trigger finished),
+    // revert to absolute so the card scrolls away with the hero section and
+    // the following website sections become visible and scrollable.
     // Desktop: always absolute (unchanged behavior).
-    if (window.innerWidth <= 768 && scrollProg > 0) {
+    if (window.innerWidth <= 768 && scrollProg > 0 && scrollProg < 1) {
       homeCard.style.position = 'fixed';
     } else {
       homeCard.style.position = 'absolute';
