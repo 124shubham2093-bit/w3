@@ -1275,6 +1275,110 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ========================================
+   ARC — Static half-circle fan (Osmo-style)
+   ======================================== */
+(function() {
+  let initialized = false;
+  let layoutFn = null;
+
+  function initArc() {
+    if (initialized) return;
+    const arcScene = document.getElementById('arcScene');
+    const arcRing  = document.getElementById('arcRing');
+
+    if (arcScene && arcRing) {
+      initialized = true;
+      const cards      = gsap.utils.toArray('#arcRing > .a-card');
+      const total      = cards.length;
+
+      // Clone each card once so we have 14 total — fills the full 360° with no blank gap
+      cards.forEach((card, i) => {
+        const clone = card.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        clone.style.pointerEvents = 'none';
+        arcRing.appendChild(clone);
+      });
+
+      // Re-query so allCards includes originals + clones (14 total)
+      const allCards   = gsap.utils.toArray('#arcRing > .a-card');
+      const allTotal   = allCards.length;          // 14
+      const stepDeg    = 360 / allTotal;           // ~25.7° even spacing
+
+      // Layout function to dynamically place cards
+      function layoutCards() {
+        const ringRadius = arcRing.offsetWidth / 2;
+        if (!ringRadius) {
+          // If layout hasn't occurred yet, retry next frame
+          requestAnimationFrame(layoutCards);
+          return;
+        }
+
+        // On mobile (≤768px) the ring is much smaller (radius ≈ 370px at 390px viewport)
+        // so cards at 25.7° step almost touch each other (arc gap ≈ -4px).
+        // Double the angular step on mobile so only alternate cards are placed
+        // in the visible bottom arc, giving ~33px visible gaps between card edges.
+        const isMobile = window.innerWidth <= 768;
+        const effectiveStep = isMobile ? stepDeg * 2 : stepDeg;
+
+        allCards.forEach((card, i) => {
+          const angleDeg = -170 + effectiveStep * i;   // start at -170° and go full circle
+          const angleRad = angleDeg * (Math.PI / 180);
+          const cx = ringRadius + ringRadius * Math.cos(angleRad);
+          const cy = ringRadius + ringRadius * Math.sin(angleRad);
+          gsap.set(card, {
+            left:            cx - card.offsetWidth  / 2,
+            top:             cy - card.offsetHeight / 2,
+            rotation:        angleDeg + 90,
+            transformOrigin: 'center center',
+            force3D:         true,
+            opacity:         1   // reveal now that position is correct
+          });
+        });
+      }
+
+      layoutFn = layoutCards;
+
+      // Run layout initially
+      layoutCards();
+
+      // Ring starts at rest
+      gsap.set(arcRing, { rotation: 0, force3D: true });
+
+      // ── Continuous auto-rotation ──
+      const DEG_PER_SEC = 6.3;
+      let autoAngle  = 0;
+      let lastTs     = null;
+
+      function rotateTick(ts) {
+        if (!lastTs) lastTs = ts;
+        const delta = Math.min((ts - lastTs) / 1000, 0.05); // cap at 50ms to avoid jump on tab refocus
+        lastTs = ts;
+        autoAngle -= DEG_PER_SEC * delta;
+        arcRing.style.transform = `translate(-50%, 0) rotate(${autoAngle}deg)`;
+        requestAnimationFrame(rotateTick);
+      }
+      requestAnimationFrame(rotateTick);
+    }
+  }
+
+  // Initialize immediately or on DOMContentLoaded
+  if (document.readyState !== 'loading') {
+    initArc();
+  } else {
+    document.addEventListener('DOMContentLoaded', initArc);
+  }
+
+  // Safe recalculation on window load and resize
+  window.addEventListener('load', () => {
+    initArc(); // Safety fallback
+    if (layoutFn) layoutFn();
+  });
+  window.addEventListener('resize', () => {
+    if (layoutFn) layoutFn();
+  });
+})();
+
+/* ========================================
    GSAP PARALLAX + LENIS SMOOTH SCROLL
    (Runs after DOMContentLoaded, outside it)
    ======================================== */
@@ -1363,76 +1467,6 @@ window.addEventListener('load', () => {
         }
       }
     );
-  }
-
-  // ── ARC — Static half-circle fan (Osmo-style) ──
-  const arcScene = document.getElementById('arcScene');
-  const arcRing  = document.getElementById('arcRing');
-
-  if (arcScene && arcRing) {
-    const cards      = gsap.utils.toArray('#arcRing > .a-card');
-    const total      = cards.length;
-
-    // Clone each card once so we have 14 total — fills the full 360° with no blank gap
-    cards.forEach((card, i) => {
-      const clone = card.cloneNode(true);
-      clone.setAttribute('aria-hidden', 'true');
-      clone.style.pointerEvents = 'none';
-      arcRing.appendChild(clone);
-    });
-
-    // Re-query so allCards includes originals + clones (14 total)
-    const allCards   = gsap.utils.toArray('#arcRing > .a-card');
-    const allTotal   = allCards.length;          // 14
-    const stepDeg    = 360 / allTotal;           // ~25.7° even spacing
-
-    // Layout function to dynamically place cards
-    function layoutCards() {
-      const ringRadius = arcRing.offsetWidth / 2;
-      if (!ringRadius) return;
-
-      allCards.forEach((card, i) => {
-        const angleDeg = -170 + stepDeg * i;       // start at -170° and go full circle
-        const angleRad = angleDeg * (Math.PI / 180);
-        const cx = ringRadius + ringRadius * Math.cos(angleRad);
-        const cy = ringRadius + ringRadius * Math.sin(angleRad);
-        gsap.set(card, {
-          left:            cx - card.offsetWidth  / 2,
-          top:             cy - card.offsetHeight / 2,
-          rotation:        angleDeg + 90,
-          transformOrigin: 'center center',
-          force3D:         true,
-          opacity:         1   // reveal now that position is correct
-        });
-      });
-    }
-
-    // Run layout initially
-    layoutCards();
-
-    // Re-calculate layout on window resize to ensure full responsiveness across screens (like tablet)
-    window.addEventListener('resize', layoutCards);
-
-    // Ring starts at rest
-    gsap.set(arcRing, { rotation: 0, force3D: true });
-
-    // ── Continuous auto-rotation — same direction & feel as blue ticker ──
-    // Ticker: 25s per cycle ≈ 6.3°/s at this ring size for matching perceived speed
-    // Direction: negative (counterclockwise) = cards drift left, same as ticker
-    const DEG_PER_SEC = 6.3;
-    let autoAngle  = 0;
-    let lastTs     = null;
-
-    function rotateTick(ts) {
-      if (!lastTs) lastTs = ts;
-      const delta = Math.min((ts - lastTs) / 1000, 0.05); // cap at 50ms to avoid jump on tab refocus
-      lastTs = ts;
-      autoAngle -= DEG_PER_SEC * delta;
-      arcRing.style.transform = `translate(-50%, 0) rotate(${autoAngle}deg)`;
-      requestAnimationFrame(rotateTick);
-    }
-    requestAnimationFrame(rotateTick);
-
   }
 
 });
@@ -1669,17 +1703,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const vh = window.innerHeight;
 
     const t  = ease(Math.max(0, Math.min(1, (scrollProg - .05) / .50)));
-    const cW = lerp(homeAnchorWidth,            vw, t);
-    const cH = lerp(homeAnchorHeight,           vh, t);
-    const cX = lerp(homeAnchorLeftOffset, 0, t);
-    const cY = lerp(homeAnchorTopOffset,  0, t);
+    const cW = lerp(homeAnchorWidth,      vw, t);
+    const cH = lerp(homeAnchorHeight,     vh, t);
+    const cX = lerp(homeAnchorLeftOffset, 0,  t);
+    const cY = lerp(homeAnchorTopOffset,  0,  t);
     const cR = lerp(12, 0, t);
 
     homeCard.style.width        = cW + 'px';
     homeCard.style.height       = cH + 'px';
-    homeCard.style.left         = cX + 'px';
-    homeCard.style.top          = cY + 'px';
     homeCard.style.borderRadius = cR + 'px';
+
+    // Mobile: position:fixed when section is actively scrolling (scrollProg>0),
+    // absolute at rest so the card doesn't float over the hero at page load.
+    // Desktop: always absolute (unchanged behavior).
+    if (window.innerWidth <= 768 && scrollProg > 0) {
+      homeCard.style.position = 'fixed';
+    } else {
+      homeCard.style.position = 'absolute';
+    }
+    homeCard.style.left = cX + 'px';
+    homeCard.style.top  = cY + 'px';
 
     const tf = Math.max(0, 1 - t * 2.8);
     if (homeInner) {
@@ -1772,13 +1815,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (typeof ScrollTrigger !== 'undefined') {
+    // On mobile the CSS spacer is 600px (see .home-reel-spacer in mobile.css).
+    // On desktop it remains 900px. Match the end value so the expansion
+    // animation progresses fully before the user scrolls past the section.
+    // scrub:true links animation progress directly to scroll position so iOS
+    // momentum-based scrolling drives the animation reliably (no RAF jitter).
+    const reelScrollDist = window.innerWidth <= 768 ? 600 : 900;
     ScrollTrigger.create({
       trigger: homeSection,
       start: 'top top',
-      end: '+=900',
+      end: '+=' + reelScrollDist,
+      scrub: window.innerWidth <= 768 ? 0.3 : false, // smooth scrub on mobile
       onUpdate: self => {
-        targetProg = self.progress;
-        if (!rafId) rafId = requestAnimationFrame(smoothStep);
+        if (window.innerWidth <= 768) {
+          // On mobile: drive animation directly from scroll progress (scrub handles smoothing)
+          scrollProg = self.progress;
+          updateHomeCard();
+        } else {
+          // Desktop: original RAF-smoothed path
+          targetProg = self.progress;
+          if (!rafId) rafId = requestAnimationFrame(smoothStep);
+        }
       },
       onLeave: () => {
         showImmersiveUI();
@@ -1800,9 +1857,18 @@ document.addEventListener('DOMContentLoaded', () => {
     cacheHomeDimensions();
     updateHomeCard(); 
   }, 150);
+  // Refresh ScrollTrigger after fonts, videos and mobile layout settle.
+  // The 'load' event fires after all resources (including web fonts) are ready,
+  // ensuring getBoundingClientRect values for sticky sections are accurate.
+  window.addEventListener('load', () => {
+    if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+    cacheHomeDimensions();
+    updateHomeCard();
+  });
   window.addEventListener('resize', () => {
     cacheHomeDimensions();
     updateHomeCard();
+    if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
   });
 
   const homeFsClose = document.getElementById('home-fs-close');

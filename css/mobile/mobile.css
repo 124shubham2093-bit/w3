@@ -17,13 +17,17 @@
     overflow-x: hidden !important;
   }
 
-  /* ── RC-1 (revised): Give hero enough space for the scaled-down arc ──
-     Desktop arc-ring is 260vh = 2640px on mobile — far too big.
-     We scale it to 220vw below. The hero needs ~120vh minimum.
-     padding-bottom:0 here — the reel's own margin-top (32vh below)
-     provides vertical separation between arc and reel. */
+  /* ── RC-1 (final): Controlled hero height — removes giant blank gap ──
+     120vh was far too large (>1000px on most phones). The hero content
+     (ticker + headline + sub-text + padding) consumes ~300px. We then need
+     only enough extra room for the arc cards to peek above the reel section.
+     With the arc ring at top:38vh and responsive sizing (see .arc-ring below),
+     card peaks sit at roughly 38vh + (ring-radius × 0.5). At 390px this is
+     ~38vh + 190px ≈ 510px. Giving the hero a minimum of that height
+     (calc(var(--nav-height) + 480px) ≈ 532px) is sufficient.
+     padding-bottom:0 — the reel section's own padding provides separation. */
   .hero-page {
-    min-height: 120vh !important;
+    min-height: calc(var(--nav-height) + 480px) !important;
     height: auto !important;
     padding-bottom: 0 !important;
   }
@@ -43,25 +47,29 @@
      .hero-text gets z-index:25 so headline + sub-text always appear
      in front of the orbiting video cards. */
 
-  /* ── Scale the arc ring for mobile AND move it higher ──
-     Desktop: 260vh = 2640px on 844px viewport. Ring radius = 1320px.
-     Fix width: 220vw = ~858px on 390px. Radius = 429px.
-     Fix top: 35vh (was 48vh). With top:35vh, the ring center sits at
-     35vh + 429px from arc-scene top. Card peaks land at ~350-420px
-     from page-top — above the reel section (which starts at ~630px
-     after its 32vh margin-top). Cards are visible in the hero area
-     without overlapping the reel. The JS layoutCards() reads
-     arcRing.offsetWidth for positions so CSS-only changes auto-resize. */
+  /* ── Scale the arc ring for mobile — responsive, not hardcoded ──
+     Desktop ratio: 260vh ring on a 100vh viewport ≈ arc is 2.6× viewport height.
+     The equivalent on mobile keeping the same visual proportion:
+       min(190vw, 88svh) — this gives:
+         360px → 684px ring   430px → 817px ring
+         375px → 712px ring   412px → 783px ring
+         390px → 741px ring
+     Using svh (small viewport height) as the upper cap prevents the ring
+     from dominating tall phones. top:38vh centers card peaks in the lower
+     hero area. JS layoutCards() reads offsetWidth so JS adapts automatically.
+     220vw (old value) was 858px at 390px and consumed excess vertical space. */
   .arc-ring {
-    width: 220vw !important;
-    height: 220vw !important;
-    top: 35vh !important;
+    width: min(190vw, 88svh) !important;
+    height: min(190vw, 88svh) !important;
+    top: 38vh !important;
   }
 
-  /* Sizing cards and details on mobile to be neat and proportional */
+  /* Sizing cards and details on mobile to be neat and proportional.
+     Width proportional to the smaller arc ring (190vw → radius ≈ 95vw).
+     Cards at 48vw feel correctly sized relative to the new ring. */
   .a-card {
-    width: clamp(220px, 56vw, 250px) !important;
-    height: clamp(155px, 40vw, 180px) !important;
+    width: clamp(170px, 48vw, 220px) !important;
+    height: clamp(120px, 34vw, 158px) !important;
     border-radius: 12px !important;
   }
 
@@ -176,37 +184,49 @@
     display: none !important;
   }
 
-  /* ── RC-2 (revised): Restore a modest margin-top; keep sticky ──
-     Original RC-2 removed all margin-top (was 38vh in style.css) to
-     eliminate the "huge blank gap". But with the arc ring now at top:35vh,
-     card peaks land at y:350-420px. The reel must start BELOW that.
-     32vh (~270px at 844px) pushes the reel section start to ~630px —
-     safely below all arc card positions. The old 38vh gap complaint was
-     caused by the hero being 290vh tall, not by the margin itself.
-     With hero min-height:120vh the 32vh margin is proportional and
-     creates a natural breathing room between hero text and reel.
-     position:sticky + top:0 is preserved so ScrollTrigger still works. */
+  /* ── RC-2 (final): Reduce margin-top, restore white background ──
+     The reference video shows the Play Reel section starting on a WHITE
+     background, not solid black. The section is sticky on the hero's
+     white (#f5f5f5) parent, so we set background:transparent here.
+     The dark full-bleed video state is achieved by the expanding #home-card
+     (z-index:50) covering the section as the user scrolls.
+
+     margin-top: With the smaller arc ring (top:38vh, radius≈95vw≈370px at 390px),
+     card peaks sit at ~38vh + 370px × cos(60°) ≈ 38vh + 185px ≈ 506px.
+     A margin-top of 20vh (~169px at 844px) pushes the reel to ~669px from page top
+     — safely below the card peaks after the hero content + padding.
+
+     gap reduced to 24px (was 32px) for a more compact layout.
+     padding reduced slightly: clamp(28px,5vh,48px). */
   #home-reel-section {
     position: sticky !important;
     top: 0 !important;
-    margin-top: 32vh !important;        /* pushes reel below arc card area */
+    margin-top: 20vh !important;        /* compact — arc cards clear at ~38vh+radius */
     height: auto !important;
     min-height: auto !important;
-    background: #000 !important;
-    gap: 32px !important;
-    padding: clamp(40px, 8vh, 64px) 24px !important;
-    z-index: 15 !important;             /* keeps base value — explicitly stated */
+    background: transparent !important; /* starts on hero white; card expands to black */
+    gap: 24px !important;
+    padding: clamp(28px, 5vh, 48px) 24px !important;
+    z-index: 15 !important;
   }
 
-  /* Keep the inner text readable on mobile */
+  /* Keep the inner text readable on mobile and layer it correctly above Play/Reel text */
   #home-reel-section .hero-inner-text {
+    position: relative !important;
+    z-index: 30 !important;
+    top: auto !important;
+    left: auto !important;
     padding: 0 !important;
     max-width: 100% !important;
   }
 
+  /* Paragraph: clearly readable against the white hero background */
   .arc-hero-para {
-    font-size: clamp(15px, 4vw, 18px) !important;
+    font-size: clamp(14px, 3.8vw, 17px) !important;
     padding: 0 !important;
+    color: #1a1a1a !important;          /* dark text on white bg — matches reference */
+    font-weight: 500 !important;        /* slightly bolder for legibility */
+    opacity: 1 !important;
   }
 
   /* Scale down play/reel text for mobile */
